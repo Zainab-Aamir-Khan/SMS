@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-const Navbar = () => {
+export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -14,16 +14,16 @@ const Navbar = () => {
   };
 
   return (
-    <nav style={{ padding: '10px 20px', background: '#333', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div>
-        <strong>SMS Portal</strong> ({user.role.toUpperCase()})
+    <nav className="navbar">
+      <div className="brand">
+        🎓 SMS Portal <span className="role-badge">{user.role}</span>
       </div>
-      <div>
-        <span style={{ marginRight: '15px' }}>Welcome, {user.name}</span>
-        <button onClick={handleLogout} style={{ padding: '5px 10px', cursor: 'pointer' }}>Logout</button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <span>Welcome, <strong>{user.name}</strong></span>
+        <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '6px 12px' }}>
+          Logout
+        </button>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

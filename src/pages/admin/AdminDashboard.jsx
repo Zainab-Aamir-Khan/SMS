@@ -3,14 +3,15 @@ import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="page-container">
       <h1>Admin Dashboard</h1>
-      <p>Welcome to the Admin Portal. Select an action below:</p>
-      <div style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
-        <Link to="/admin/manage-users" style={{ padding: '10px 15px', background: '#007bff', color: '#fff', textDecoration: 'none', borderRadius: '4px' }}>
+      <p>System configuration & user access management.</p>
+      
+      <div className="actions-grid">
+        <Link to="/admin/manage-users" className="btn">
           Manage Users
         </Link>
-        <Link to="/admin/settings" style={{ padding: '10px 15px', background: '#6c757d', color: '#fff', textDecoration: 'none', borderRadius: '4px' }}>
+        <Link to="/admin/settings" className="btn btn-secondary">
           System Settings
         </Link>
       </div>

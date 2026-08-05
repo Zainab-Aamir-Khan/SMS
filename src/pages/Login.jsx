@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const Login = () => {
+export default function Login() {
   const [role, setRole] = useState('student');
   const [name, setName] = useState('');
   const { login } = useAuth();
@@ -12,42 +12,37 @@ const Login = () => {
     e.preventDefault();
     login({ name: name || 'Demo User', role });
 
-    // Redirect to the appropriate dashboard
     if (role === 'admin') navigate('/admin/dashboard');
     else if (role === 'teacher') navigate('/teacher/dashboard');
     else navigate('/student/dashboard');
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-      <h2>Sign In</h2>
+    <div className="auth-card">
+      <h2>Portal Login</h2>
+      <p style={{ fontSize: '0.875rem' }}>Select your portal access role to continue.</p>
       <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: '15px' }}>
-          <label>Name:</label>
+        <div className="form-group">
+          <label>Full Name</label>
           <input
             type="text"
-            style={{ width: '100%', padding: '8px' }}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
+            placeholder="e.g. Jane Doe"
           />
         </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label>Select Role:</label>
-          <select
-            style={{ width: '100%', padding: '8px' }}
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          >
+        <div className="form-group">
+          <label>Role</label>
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="student">Student</option>
             <option value="teacher">Teacher</option>
             <option value="admin">Admin</option>
           </select>
         </div>
-        <button type="submit" style={{ padding: '10px 20px' }}>Login</button>
+        <button type="submit" className="btn" style={{ width: '100%' }}>
+          Sign In
+        </button>
       </form>
     </div>
   );
-};
-
-export default Login;
+}
