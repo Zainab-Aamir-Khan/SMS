@@ -2,9 +2,9 @@ import React from 'react';
 
 export default function SystemSettings() {
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="page-container">
       <h2>System Settings</h2>
-      <p>Configure portal parameters, academic year, and active semesters.</p>
+      <p>Configure portal options, current academic term, and system preferences.</p>
     </div>
   );
 }

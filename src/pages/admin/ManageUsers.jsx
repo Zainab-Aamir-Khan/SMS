@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 export default function ManageUsers() {
-  const [users, setUsers] = useState([
+  const users = [
     { id: 1, name: 'Alice Smith', role: 'Student' },
     { id: 2, name: 'Dr. John Doe', role: 'Teacher' },
-  ]);
+  ];
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="page-container">
       <h2>Manage Users</h2>
-      <table border="1" cellPadding="10" style={{ width: '100%', marginTop: '10px', borderCollapse: 'collapse' }}>
+      <p>View and manage all registered system users.</p>
+      <table className="styled-table">
         <thead>
-          <tr style={{ background: '#f4f4f4' }}>
+          <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Role</th>
