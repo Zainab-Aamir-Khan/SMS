@@ -14,6 +14,7 @@ import Unauthorized from './pages/Unauthorized';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageUsers from './pages/admin/ManageUsers';
 import SystemSettings from './pages/admin/SystemSettings';
+import ClassesSubjects from './pages/admin/ClassesSubjects';
 
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 import ClassAttendance from './pages/teacher/ClassAttendance';
@@ -40,6 +41,7 @@ function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/manage-users" element={<ManageUsers />} />
             <Route path="/admin/settings" element={<SystemSettings />} />
+            <Route path="/admin/classes-subjects" element={<ClassesSubjects />} />  
           </Route>
 
           {/* Protected Teacher Routes */}
