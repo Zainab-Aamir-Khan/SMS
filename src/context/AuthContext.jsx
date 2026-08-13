@@ -1,82 +1,70 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  auth, 
-  db, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged,
-  doc, 
-  setDoc, 
-  getDoc 
-} from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Sign Up new users & save role to Firestore
-  const signup = async ({ name, email, password, role }) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const firebaseUser = userCredential.user;
-
-    // Secure fallback: protect against admin role injection on signup
-    const safeRole = role === 'admin' ? 'student' : role;
-
-    // Save profile and role to Firestore
-    await setDoc(doc(db, "users", firebaseUser.uid), {
-      name,
-      email,
-      role: safeRole,
-      createdAt: new Date().toISOString()
-    });
-
-    setUser({ uid: firebaseUser.uid, name, email, role: safeRole });
-  };
-
-  // Sign In existing users & fetch role from Firestore
-  const login = async ({ email, password }) => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const firebaseUser = userCredential.user;
-
-    // Fetch user details & role from Firestore
-    const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-    
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      setUser({ uid: firebaseUser.uid, ...userData });
-      return userData;
-    } else {
-      throw new Error("User record not found.");
-    }
-  };
-
-  const logout = () => {
-    return signOut(auth);
-  };
-
-  // Persist authentication state across page reloads
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-        if (userDoc.exists()) {
-          setUser({ uid: firebaseUser.uid, ...userDoc.data() });
+      try {
+        if (firebaseUser) {
+          console.log("Auth observed valid user session:", firebaseUser.email);
+          
+          // 🚀 Hardcoded Super Admin Override for Safety
+          let detectedRole = firebaseUser.email === 'sohailasghar@gmail.com' ? 'admin' : 'student';
+
+          let userData = {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            role: detectedRole // Safe fallback assignment
+          };
+
+          try {
+            // ⚡ Optimized: Direct Document Fetch using UID instead of Email Query
+            const userDocRef = doc(db, 'users', firebaseUser.uid);
+            const userSnap = await getDoc(userDocRef);
+
+            if (userSnap.exists()) {
+              const firestoreData = userSnap.data();
+              userData = {
+                ...userData,
+                ...firestoreData,
+                role: firestoreData.role || detectedRole // Ensure role is never empty
+              };
+            }
+          } catch (firestoreError) {
+            console.warn("Firestore look-up skipped or restricted:", firestoreError);
+          }
+
+          console.log("Setting Final Global User Context:", userData);
+          setUser(userData);
+        } else {
+          setUser(null);
         }
-      } else {
+      } catch (error) {
+        console.error("Critical Auth Sync Error:", error);
         setUser(null);
+      } finally {
+        // Safe placement ensuring loading is turned off only after user context is fully built
+        setLoading(false); 
       }
+    }, (error) => {
+      console.error("Auth observer failure:", error);
       setLoading(false);
     });
 
-    return unsubscribe;
+    return () => unsubscribe();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, signup, login, logout, loading }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, loading }}>
+      {children}
     </AuthContext.Provider>
   );
 };
