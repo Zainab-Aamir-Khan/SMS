@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
           console.log("Auth observed valid user session:", firebaseUser.email);
           
           // 🚀 Hardcoded Super Admin Override for Safety
-          let detectedRole = firebaseUser.email === 'sohailasghar@gmail.com' ? 'admin' : 'student';
+          let detectedRole = firebaseUser.email === 'zaamir427@gmail.com' ? 'admin' : 'student';
 
           let userData = {
             uid: firebaseUser.uid,
